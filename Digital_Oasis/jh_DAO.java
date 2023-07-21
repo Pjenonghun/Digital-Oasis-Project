@@ -14,19 +14,6 @@ public interface jh_DAO {
 	//회원정보 수정하기//
 	void update_member(String member_id,String member_pw,String member_name,
 			String member_mobile,String member_email,String member_address);
-	ArrayList<JA_memberDTO> member_select();
-	void member_insert(String a, String b, String c, String d, String e, String f, String g);
-	int login(String a, String b);
-	int idChek(String a);
-	JA_memberDTO getUserInfo(String a,String b);
-	
-	ArrayList<jh_productDTO> getProducts();
-	ArrayList<jh_productDTO> getBestProducts();
-	ArrayList<jh_productDTO> getNewProducts();	
-	ArrayList<jh_productDTO> getKitchenProducts();
-	ArrayList<jh_productDTO> getHomeProducts();
-	ArrayList<jh_productDTO> getSeasonProducts();
-	
 	jh_memberDTO getMember(String id);
 	void addOrder(
 			int member_seq, 
@@ -40,7 +27,7 @@ public interface jh_DAO {
 			String order_mobile
 			);
 	//주문목록 관련//
-	//주문목록
+	//주문목록//
 	ArrayList<jh_slectorderDTO>select_orderList(String member_id, int page, int total);
 	
 	int getOrderTotal(String member_id);	
