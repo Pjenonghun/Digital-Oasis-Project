@@ -5,24 +5,7 @@
 	
 	
 <mapper namespace="com.human.springboot.jh_DAO">
-	<!--로그인 -->
-	<select id="idChek" resultType="int" >
-		select count(*) from test_member where member_id=#{param1} 
-	</select>
-	<select id="login" resultType="int" >
-		select count(*) from test_member where member_id=#{param1} and member_pw=#{param2}
-	</select>	
-	
-	<!--회원가입 -->
-	<insert id="member_insert">
-		insert into test_member(member_seq,member_id,member_pw,member_name,member_mobile,member_email,member_address,member_class,member_created) 
-		values(TEST_MEMBER_SEQ.nextval,#{param1},#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},to_char(sysdate,'yyyymmdd'))
-	</insert>
-	
 	<!--정보수정 -->
-	<select id="getUserInfo" resultType="com.human.springboot.JA_memberDTO">
-		select * from test_member where member_id=#{param1} and member_pw=#{param2}
-	</select>
 	<update id="update_member">
 		update test_member set member_pw=#{param2},member_name=#{param3},member_mobile=#{param4},
 						  member_email=#{param5},member_address=#{param6} 
@@ -33,78 +16,6 @@
 	    from test_member
 	    where member_id=#{member_id}
 	</select>
-	
-	<!--상품리스트 -->
-	<select id="getProducts" resultType="com.human.springboot.jh_productDTO">
-		select * from test_product
-	</select>
-	
-	<select id="getKitchenProducts" resultType="com.human.springboot.jh_productDTO">
-		select * from test_product where prod_category_code=1
-	</select>
-	
-	<select id="getSeasonProducts" resultType="com.human.springboot.jh_productDTO">
-		select * from test_product where prod_category_code=2
-	</select>
-	
-	<select id="getHomeProducts" resultType="com.human.springboot.jh_productDTO">
-		select * from test_product where prod_category_code=3
-	</select>
-	<select id="getProduct" resultType="com.human.springboot.jh_productDTO">
-		select * from test_product where prod_id=#{param1}
-	</select>
-	<select id="getNewProducts" resultType="com.human.springboot.jh_productDTO">
-		<![CDATA[
-		select * from test_product 
-		where (to_date(to_char(sysdate,'YYYYMMDD')) - to_date(prod_created)) <=30
-		order by prod_created desc
-		]]>
-		<!-- 
-		select * from test_product
-		order by prod_created desc  이렇게하면 그냥 그냥 전상품중에서 가장나중에나온순
-		 -->
-	</select>
-	
-	<select id="getBestProducts" resultType="com.human.springboot.jh_productDTO">
-		select * from test_product
-		where prod_created!=to_char(sysdate,'YYYYMMDD') 
-		and prod_amount_sold/(to_date(to_char(sysdate,'YYYYMMDD'))-to_date(prod_created)) > 2
-		order by 
-		prod_amount_sold/(to_date(to_char(sysdate,'YYYYMMDD'))-to_date(prod_created))
-		desc 
-		
-		<!-- 
-		 위에처럼하면 하루에 하나 이상 팔린애들만, 판매율 높은 순서대로,
-		 아래처럼하면 판매율 높은 순서대로 전상품
-		 
-		select * from test_product
-		where prod_created!=to_char(sysdate,'YYYYMMDD')
-		order by 
-		prod_amount_sold/(to_date(to_char(sysdate,'YYYYMMDD'))-to_date(prod_created))
-		desc;
-				
-		
-		 -->	
-	</select>
-	<!--상품정보 페이지 -->
-	<select id="getReviews" resultType="com.human.springboot.jh_reviewDTO">
-		select m.member_id mid, r.review_rate, r.review_content
-		from test_review r, test_member m
-		where r.member_seq = m.member_seq and r.prod_id=#{param1}
-	</select>
-	<select id="getMember" resultType="com.human.springboot.jh_memberDTO">
-		select * from test_member where member_id=#{param1}
-	</select>
-	<select id="getMember2" resultType="com.human.springboot.jh_memberDTO">
-		select * from test_member where member_seq=#{param1}
-	</select>
-	<!--상품주문 -->
-	<insert id="addOrder">
-		insert into test_order values(test_order_seq.nextval, #{param1}, #{param2}, #{param3}, #{param4},
-		#{param5}, to_char(sysdate,'YYYYMMDD'), 'n', #{param6}, to_char(sysdate,'YYYYMMDD'), #{param7},
-		#{param8}, #{param9},''
-		)
-	</insert>
 	<!--주문목록 -->
  	<select id="select_orderList" resultType="com.human.springboot.jh_slectorderDTO">
  	<![CDATA[
@@ -123,7 +34,7 @@
  		where row_num> (#{param2}-1) * #{param3} 
  	]]> 
  	</select> 
-	<select id="getOrderTotal" resultType="int"><!-- 유저의 주문목록 총 개수?갯수? -->
+	<select id="getOrderTotal" resultType="int"><!-- 유저의 주문목록 총 갯수 -->
 		select count(*)
 		from test_order a, test_member b, test_product c
 		where a.prod_id = c.prod_id and a.member_seq = b.member_seq and b.member_id=#{param1}
