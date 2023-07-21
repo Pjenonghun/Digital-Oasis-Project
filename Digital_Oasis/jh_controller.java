@@ -19,8 +19,7 @@ import jakarta.servlet.http.HttpSession;
 public class jh_controller {
 	@Autowired
 	private jh_DAO jhdao;
-
-//user_update//
+	
 	@GetMapping("/member_update")
 	public String member_update() {
 		return "member_update";
@@ -35,7 +34,6 @@ public class jh_controller {
 		String check="ok";
 		try {
 			String id=req.getParameter("uid");
-
 			String pw=req.getParameter("upw");
 			String name=req.getParameter("unm");
 			String mobile=req.getParameter("umb");
@@ -75,7 +73,6 @@ public class jh_controller {
 		}
 		return ja.toString();	
 	}	
-	///////////////////////////////////// 여기까지 상품 list ////////////////////////////////////////////
 	@GetMapping("/order_list")
 	public String orderlist() {
 		return "order_list";
@@ -84,19 +81,12 @@ public class jh_controller {
 	@ResponseBody
 	public String select_order(HttpServletRequest req) {
 		String member_id=req.getParameter("member_id");
-		
-	
 		int total = jhdao.getOrderTotal(member_id);
 		jh_pagination paging = new jh_pagination();
-//		paging.setAmount(20);
-//		paging.setPageNum(2);
 		paging.setPageNum(Integer.parseInt(req.getParameter("pageNum")));
 		int pageNum = paging.getPageNum();
 		int amount = paging.getAmount();
-	      
-	    int totalPage = (int)Math.ceil(total*1.0/amount);
-	    
-//	    jhdao.select_orderList(member_id, pageNum, amount);
+	    	int totalPage = (int)Math.ceil(total*1.0/amount);
 		ArrayList<jh_slectorderDTO>dto=jhdao.select_orderList(member_id, pageNum, amount);
 
 		JSONArray ja=new JSONArray();
@@ -115,17 +105,11 @@ public class jh_controller {
 		}		
 		return ja.toString();
 	}
-
-	
-	
-	/////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////// jhController///////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////
 	@GetMapping("/review")
 	public String review() {
 		return "review";
 	}
-	@PostMapping("/select_reviewY") //리뷰가능 
+	@PostMapping("/select_reviewY")
 	@ResponseBody
 	public String select_review(HttpServletRequest req) {
 		
@@ -133,20 +117,13 @@ public class jh_controller {
 		int member_seq = (int) session.getAttribute("member_seq");
 		
 		int total = jhdao.getReviewTotal(member_seq);
-		System.out.println("member_Seq: "+member_seq+" Total: "+total);
-	
 		jh_pagination paging = new jh_pagination();
 		paging.setPageNum(Integer.parseInt(req.getParameter("pageNum")));
 		int pageNum = paging.getPageNum();
 		int amount = paging.getAmount();
-	    System.out.println(pageNum +" " +amount);
-	    
-	    int totalPage = (int)Math.ceil(total*1.0/amount);
-	    
-	    System.out.println("total page: "+totalPage);
-	    System.out.println("total:"+total);
-	    
+	    	int totalPage = (int)Math.ceil(total*1.0/amount);
 		ArrayList<jh_selectreviewDTO> reviewprods = jhdao.select_reviewInfo(member_seq, pageNum, amount);
+		
 		JSONArray ja=new JSONArray();
 		
 		for(int i=0; i<reviewprods.size(); i++) {
@@ -168,49 +145,31 @@ public class jh_controller {
 		
 		return ja.toString();	
 	}
-	@PostMapping("/select_reviewDone") //작성한 리뷰 
+	@PostMapping("/select_reviewDone")
 	@ResponseBody
 	public String select_reviewY(HttpServletRequest req) {
 		String member_id=req.getParameter("member_id");
 		int total=jhdao.getDoneTotal(member_id);
-		
 		jh_pagination paging = new jh_pagination();
-		
 		paging.setPageNum(Integer.parseInt(req.getParameter("pageNum")));
-		
 		int pageNum=paging.getPageNum();
 		int amount =paging.getAmount();
-		
 		int totalPage=(int)Math.ceil(total*1.0/amount);
-		
 		ArrayList<jh_selectreviewsDTO> dto = jhdao.select_reviewInfos(member_id ,pageNum ,amount);
 		
 		JSONArray ja=new JSONArray();
 		for(int i=0; i<dto.size(); i++) {
-			
-			JSONObject jo=new JSONObject();
-				// 리뷰번호, 제품이름, 제품사진, 평점, 리뷰내용 출력할거임
-			
-				
+			JSONObject jo=new JSONObject();	
 				jo.put("review_seq",dto.get(i).getReview_seq());
-				
 				jo.put("order_id",dto.get(i).getOrder_id());
-				
 				jo.put("prod_name",dto.get(i).getProd_name());
-				
 				jo.put("prod_img",dto.get(i).getProd_image());
-				
 				jo.put("review_rate",dto.get(i).getReview_rate());
-				
 				jo.put("review_content",dto.get(i).getReview_content());
-				
-				
 				jo.put("totalPage", totalPage);
-				
 				ja.put(jo);			
 		}
 		return ja.toString();
-	
 	}
 	@PostMapping("/insert_review")
 	@ResponseBody
@@ -218,16 +177,11 @@ public class jh_controller {
 		String check="ok";
 		try {
 			int order_id=Integer.parseInt(req.getParameter("order_seq"));
-			
 			int member_seq=Integer.parseInt(req.getParameter("member_seq"));
-			
 			int prod_id=Integer.parseInt(req.getParameter("prod_id"));
-			
-			int review_rate=Integer.parseInt(req.getParameter("review_rate"));
-			
+			int review_rate=Integer.parseInt(req.getParameter("review_rate"));			
 			String review_content=req.getParameter("review_content");
-			
-//			int order_seq=Integer.parseInt(req.getParameter("order_seq"));
+
 			jhdao.insert_review(member_seq,prod_id,review_rate,review_content,order_id);
 			jhdao.update_status(member_seq, prod_id);
 			
@@ -240,19 +194,10 @@ public class jh_controller {
 	@ResponseBody
 	public String update_review(HttpServletRequest req) {
 		String check="ok";
-//		try {
-			
-			String review_content=req.getParameter("review_content");
-			System.out.println(review_content);
-			int review_rate=Integer.parseInt(req.getParameter("review_rate"));
-			
-			int review_seq=Integer.parseInt(req.getParameter("review_seq"));
-			
-			jhdao.update_review(review_rate,review_content,review_seq);
-			
-//		}catch(Exception e) {
-//			return "fail";
-//		}
+		String review_content=req.getParameter("review_content");
+		int review_rate=Integer.parseInt(req.getParameter("review_rate"));
+		int review_seq=Integer.parseInt(req.getParameter("review_seq"));
+		jhdao.update_review(review_rate,review_content,review_seq);
 		return check;
 	}
 	@PostMapping("/delete_review")
@@ -277,28 +222,17 @@ public class jh_controller {
 	@ResponseBody
 	public String select_cart(HttpServletRequest req) {
 		String member_id=req.getParameter("member_id");
-		System.out.println(member_id);
 		int pageNum=Integer.parseInt(req.getParameter("pageNum"));
-		System.out.println(pageNum);
 		int amount=Integer.parseInt(req.getParameter("count"));
-		System.out.println(amount);
 		jh_pagination paging=new jh_pagination();
-		
 		paging.setPageNum(pageNum);
 		paging.setAmount(amount);
 		int total= jhdao.selectCart(member_id);	
-		System.out.println(total);
-	
 		pageNum = paging.getPageNum();
-		System.out.println(pageNum);
  		amount =paging.getAmount();
- 		System.out.println(amount);
  		int totalPage=(int)Math.ceil(total*1.0/amount);
- 		System.out.println(totalPage);
-
+ 
 		ArrayList<jh_selectcartDTO>dto=jhdao.select_cart(member_id,pageNum,amount);
-		
-	
 		
 		JSONArray ja=new JSONArray();
 		for(int i=0; i<dto.size(); i++) {
@@ -317,29 +251,13 @@ public class jh_controller {
 	@PostMapping("/delete_cart")
 	@ResponseBody
 	public String delete_cart(HttpServletRequest req) {
-//		String[] cart_seq ;
-//		
 		String check="ok";
-//		try {
-//			cart_seq=req.getParameterValues("seq");
-//			for(int i=0; i<cart_seq.length; i++) {
-//				jhdao.delete_cart(cart_seq);
-//			}
-//			
-//		}catch(Exception e) {
-//			return "fail";
-//		}
-//		return check;
 		try {
 			int cart_seq = Integer.parseInt(req.getParameter("cart_seq"));
-			
 			jhdao.delete_cart(cart_seq);
 		} catch(Exception e) {
 			check = "fail";
 		}
-		
-		
-		
 		return check;
 	}
 }
